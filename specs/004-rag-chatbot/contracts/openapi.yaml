@@ -1,0 +1,250 @@
+openapi: "3.1.0"
+
+info:
+  title: Physical AI Book — RAG Chatbot API
+  version: "1.0.0"
+  description: |
+    FastAPI backend for the Physical AI & Humanoid Robotics textbook chatbot.
+    Provides RAG-powered question answering grounded exclusively in textbook content.
+    All sessions are anonymous — identified by client-generated UUIDs stored in localStorage.
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+  - url: http://localhost:7860
+    description: Local Docker (HF Spaces parity)
+  - url: https://{hf_username}-physical-ai-bot.hf.space
+    description: Hugging Face Spaces production
+    variables:
+      hf_username:
+        default: your-hf-username
+        description: Hugging Face account username
+
+paths:
+  /health:
+    get:
+      operationId: health_check
+      summary: Health check
+      description: Returns OK when the server is ready. Used by HF Spaces and Docker health probes.
+      responses:
+        "200":
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: ok
+
+  /chat:
+    post:
+      operationId: send_chat_message
+      summary: Send a message and receive a RAG-grounded answer
+      description: |
+        Executes the full RAG pipeline:
+        1. Embeds the question using OpenAI text-embedding-3-small
+        2. Searches Qdrant for top-5 semantically similar book chunks
+        3. Passes chunks + question to GPT-4o-mini via OpenAI Agents SDK
+        4. Saves both user and assistant messages to Neon Postgres
+        5. Returns the answer and source file references
+
+        If Qdrant returns zero results, returns a graceful fallback message (not a 500 error).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+            examples:
+              typical_question:
+                summary: Book-related question
+                value:
+                  session_id: "550e8400-e29b-41d4-a716-446655440000"
+                  message: "What is ROS 2 and why is it used in humanoid robotics?"
+              off_topic_question:
+                summary: Question not in book
+                value:
+                  session_id: "550e8400-e29b-41d4-a716-446655440000"
+                  message: "What is the capital of France?"
+      responses:
+        "200":
+          description: Successful RAG response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+              examples:
+                grounded_answer:
+                  summary: Answer found in book content
+                  value:
+                    answer: "ROS 2 (Robot Operating System 2) is a flexible framework for writing robot software. According to Week 3 of the textbook..."
+                    session_id: "550e8400-e29b-41d4-a716-446655440000"
+                    sources:
+                      - "week-03-ros2-architecture.mdx"
+                      - "week-04-nodes-topics-services.mdx"
+                fallback_answer:
+                  summary: Answer not in book content
+                  value:
+                    answer: "I couldn't find that in the book. Please check the relevant chapter."
+                    session_id: "550e8400-e29b-41d4-a716-446655440000"
+                    sources: []
+        "422":
+          description: Validation error — missing or invalid request body fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+              example:
+                detail:
+                  - loc: ["body", "message"]
+                    msg: "field required"
+                    type: "missing"
+        "500":
+          description: Internal server error — OpenAI or Qdrant call failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                detail: "AI error: Connection timeout to OpenAI API"
+
+  /history/{session_id}:
+    get:
+      operationId: get_chat_history
+      summary: Retrieve chat history for a session
+      description: |
+        Returns all stored messages for the given session, ordered by creation time ascending (oldest first).
+        Returns an empty messages array (not 404) if the session is unknown.
+        Maximum 50 messages returned per request.
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          description: UUID string identifying the anonymous browser session
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        "200":
+          description: Chat history (may be empty)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryResponse"
+              examples:
+                with_messages:
+                  summary: Session with existing messages
+                  value:
+                    messages:
+                      - role: user
+                        content: "What is ROS 2?"
+                        created_at: "2026-02-21T10:00:00Z"
+                      - role: assistant
+                        content: "ROS 2 is a flexible framework..."
+                        created_at: "2026-02-21T10:00:04Z"
+                empty_session:
+                  summary: Session not found or no messages
+                  value:
+                    messages: []
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+          description: Always "ok" when server is healthy
+
+    ChatRequest:
+      type: object
+      required: [session_id, message]
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          description: Client-generated UUID identifying the anonymous browser session
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        message:
+          type: string
+          minLength: 1
+          description: The student's question — must be non-empty
+          example: "What is ROS 2 and why is it used in humanoid robotics?"
+
+    ChatResponse:
+      type: object
+      required: [answer, session_id, sources]
+      properties:
+        answer:
+          type: string
+          description: LLM-generated answer grounded in book content, or fallback message
+          example: "ROS 2 is a flexible framework for writing robot software..."
+        session_id:
+          type: string
+          format: uuid
+          description: Echo of the request session_id
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        sources:
+          type: array
+          items:
+            type: string
+          description: Distinct MDX filenames from which context was retrieved; empty if no results
+          example: ["week-03-ros2-architecture.mdx", "week-04-nodes-topics-services.mdx"]
+
+    MessageOut:
+      type: object
+      required: [role, content, created_at]
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+          description: Who sent this message
+        content:
+          type: string
+          description: Message text
+          example: "What is ROS 2?"
+        created_at:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp
+          example: "2026-02-21T10:00:00Z"
+
+    HistoryResponse:
+      type: object
+      required: [messages]
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageOut"
+          description: Messages ordered by created_at ascending (oldest first); max 50 items
+
+    ValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  oneOf:
+                    - type: string
+                    - type: integer
+              msg:
+                type: string
+              type:
+                type: string
+
+    ErrorResponse:
+      type: object
+      required: [detail]
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message

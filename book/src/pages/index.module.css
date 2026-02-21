@@ -1,0 +1,224 @@
+.hero {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #0d1117 0%, #0a1628 60%, #0d1117 100%);
+  text-align: center;
+}
+
+.heroInner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.heroTagline {
+  font-size: 1.25rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 2rem;
+}
+
+.heroButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.heroButton:hover {
+  background: var(--ifm-color-primary-dark);
+  color: #fff;
+  text-decoration: none;
+}
+
+.main {
+  padding: 0;
+}
+
+.sectionInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.featuresSection {
+  background: var(--ifm-background-color);
+}
+
+.featureCard {
+  padding: 2rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.featureIcon {
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.featureTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.featureDescription {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.95rem;
+}
+
+.modulesSection {
+  background: var(--ifm-background-surface-color);
+}
+
+.moduleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.moduleCard {
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+}
+
+.moduleNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ifm-color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.moduleTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.moduleWeeks {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 0.75rem;
+}
+
+.moduleSummary {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.outcomesSection {
+  background: var(--ifm-background-color);
+}
+
+.outcomeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.outcomeList li {
+  padding: 1rem 1rem 1rem 2rem;
+  position: relative;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.outcomeList li::before {
+  content: '→';
+  position: absolute;
+  left: 0.5rem;
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+}
+
+.hardwareSection {
+  background: var(--ifm-background-surface-color);
+}
+
+.hardwareGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.hardwareIcon {
+  color: var(--ifm-color-primary);
+}
+
+.hardwareDescription {
+  max-width: 640px;
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.7;
+}
+
+.ctaSection {
+  margin-top: 2rem;
+}
+
+.ctaTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.ctaButton:hover {
+  background: var(--ifm-color-primary-dark);
+  color: #fff;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 3rem 1rem;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .heroButton,
+  .ctaButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

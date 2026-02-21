@@ -1,0 +1,86 @@
+.hardwareSection {
+  background-color: #1A0F0A;
+  padding: 80px 24px;
+}
+
+.sectionInner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #F5E6D0;
+  margin-bottom: 2rem;
+}
+
+.hardwareGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.hardwareIcon {
+  color: #C8A882;
+}
+
+.hardwareDescription {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  color: #8B7355;
+  line-height: 1.75;
+  max-width: 680px;
+}
+
+.hardwareDescription strong {
+  color: #F5E6D0;
+}
+
+.ctaSection {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.ctaTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #F5E6D0;
+  margin-bottom: 20px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: #C8A882;
+  border: 2px solid #C8A882;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 13px 34px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.25s ease-in-out;
+}
+
+.ctaButton:hover {
+  background-color: #C8A882;
+  color: #0F0804;
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(200, 168, 130, 0.4);
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .ctaButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

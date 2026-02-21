@@ -1,0 +1,21 @@
+# Node.js / Docusaurus
+node_modules/
+dist/
+build/
+*.log
+.env*
+
+# Docusaurus generated
+book/.docusaurus/
+book/build/
+book/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# IDEs
+.vscode/
+.idea/

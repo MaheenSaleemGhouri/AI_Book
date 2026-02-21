@@ -1,0 +1,40 @@
+name: CI — Build Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Docusaurus
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # pnpm MUST come BEFORE setup-node so Node can configure pnpm cache
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: book/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: book
+        run: pnpm install --frozen-lockfile
+
+      - name: Build site
+        working-directory: book
+        run: pnpm run build
