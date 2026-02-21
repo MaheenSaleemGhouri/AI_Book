@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd book && pnpm install --frozen-lockfile && pnpm build",
+  "buildCommand": "npm install -g pnpm@9 && cd book && pnpm install && pnpm build",
   "outputDirectory": "book/build",
   "installCommand": "echo skip",
   "framework": null,
