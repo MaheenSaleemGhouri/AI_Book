@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install -g pnpm@9 && cd book && pnpm install && pnpm build",
+  "buildCommand": "cd book && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "book/build",
   "installCommand": "echo skip",
   "framework": null,
