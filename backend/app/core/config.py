@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     qdrant_api_key: str
     collection_name: str = "physical_ai_book"
     database_url: str
-    allowed_origins: str = "http://localhost:3000"
+    allowed_origins: str = "http://localhost:3000,https://ai-book-delta-fawn.vercel.app"
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

@@ -4,6 +4,7 @@ dist/
 build/
 *.log
 .env*
+!.env.example
 
 # Docusaurus generated
 book/.docusaurus/
@@ -19,3 +20,5 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
+
+.vercel
