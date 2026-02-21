@@ -34,7 +34,7 @@ const config: Config = {
   ],
 
   // Vercel deployment
-  url: 'https://your-project.vercel.app',  // TODO: replace with your actual Vercel URL
+  url: 'https://ai-book-delta-fawn.vercel.app',
   baseUrl: '/',
   trailingSlash: false,
 
